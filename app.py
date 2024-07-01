@@ -44,7 +44,7 @@ def check(df_to_check: pd.DataFrame, df_base: pd.DataFrame):
 
 st.title('报表核对工具')
 
-st.write("本工具用于核对报表中的单价数据是否与基准文件中的单价一致，请保证待核查表格的\'Sheet1\'第一列为\'编号\'， 第二列为\'品名\'， 第三列为\'购入单价\'。")
+st.write("本工具用于核对报表中的单价数据是否与基准文件中的单价一致，请保证待核查表格的\'Sheet1\'第一列为\'编号\'， 第二列为\'品名\'， 第六列为\'购入单价\'。")
 
 uploaded_file_to_check = st.file_uploader("请上传待核对的Excel文件", type=["xlsx", "xls"], accept_multiple_files=False)
 uploaded_file_base = st.file_uploader("请上传核对基准Excel文件", type=["xlsx", "xls"])
