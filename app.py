@@ -3,11 +3,11 @@ import pandas as pd
 
 def check(df_to_check: pd.DataFrame, df_base: pd.DataFrame):
     if '品名' not in df_to_check.columns:
-        raise TypeError("\'品名\'列不存在，请检查数据格式或列名有无额外字符")
+        raise TypeError("\'品名\'列不存在，请检查待核查文件的数据格式或检查列名有无额外字符")
     df_to_check = df_to_check.dropna(subset=['品名'])
     
     if '编号' not in df_to_check.columns:
-        raise TypeError("\'编号\'列不存在，请检查数据格式或列名有无额外字符")
+        raise TypeError("\'编号\'列不存在，请检查待核查文件的数据格式或检查列名有无额外字符")
     delete_columns = df_to_check[df_to_check['编号'] == '编号']
     
     df_to_check = df_to_check.drop(delete_columns.index)
@@ -31,7 +31,7 @@ def check(df_to_check: pd.DataFrame, df_base: pd.DataFrame):
         name = df_need.iloc[i]['品名']
         value = df_need.iloc[i, 1]
         if name not in name_list:
-            errors.append(f"[{name}] 不存在于基准文件中")
+            errors.append(f"[{name}] 不存在于基准文件中\n")
         else:
             base_value = df_base_need[df_base_need[df_base_need.columns[0]] == name].iloc[0, 1]
             if abs(value - base_value) >= 0.001:
@@ -43,6 +43,8 @@ def check(df_to_check: pd.DataFrame, df_base: pd.DataFrame):
     return df_need, df_base_need
 
 st.title('报表核对工具')
+
+st.write("本工具用于核对报表中的单价数据是否与基准文件中的单价一致，请保证待核查表格的\'Sheet1\'第一列为\'编号\'， 第二列为\'品名\'， 第三列为\'购入单价\'。")
 
 uploaded_file_to_check = st.file_uploader("请上传待核对的Excel文件", type=["xlsx", "xls"], accept_multiple_files=False)
 uploaded_file_base = st.file_uploader("请上传核对基准Excel文件", type=["xlsx", "xls"])
