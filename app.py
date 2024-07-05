@@ -1,19 +1,21 @@
 import streamlit as st
 import pandas as pd
 
+category = '品名'
+price = '单价'
+
 def check(df_to_check: pd.DataFrame, df_base: pd.DataFrame):
-    if '品名' not in df_to_check.columns:
-        raise TypeError("\'品名\'列不存在，请检查待核查文件的数据格式或检查列名有无额外字符")
+    global category, price
+    if category not in df_to_check.columns:
+        raise TypeError(f"\'{category}\'列不存在，请检查待核查文件的数据格式或检查列名有无额外字符")
     df_to_check = df_to_check.dropna(subset=['品名'])
     
-    if '编号' not in df_to_check.columns:
-        raise TypeError("\'编号\'列不存在，请检查待核查文件的数据格式或检查列名有无额外字符")
-    delete_columns = df_to_check[df_to_check['编号'] == '编号']
+    if price not in df_to_check.columns:
+        raise TypeError(f"\'{price}\'列不存在，请检查待核查文件的数据格式或检查列名有无额外字符")
     
+    delete_columns = df_to_check[df_to_check[price].apply(lambda x: not isinstance(x, (int, float)))]
     df_to_check = df_to_check.drop(delete_columns.index)
-    if df_to_check.shape[1] < 6:
-        raise TypeError("待核查文件列数不正确，请保证‘品名’位于第2列， ‘购入单价（元/kg）’位于第6列。请检查数据格式")
-    df_need = df_to_check[df_to_check.columns[[1, 5]]]
+    df_need = df_to_check[[category, price]]
     
     if df_base.shape[1] < 4:
         raise TypeError("基准文件列数不正确，请检查数据格式")
@@ -44,13 +46,30 @@ def check(df_to_check: pd.DataFrame, df_base: pd.DataFrame):
 
 st.title('报表核对工具')
 
-st.write("本工具用于核对报表中的单价数据是否与基准文件中的单价一致，请保证待核查表格的\'Sheet1\'第一列为\'编号\'， 第二列为\'品名\'， 第六列为\'购入单价\'。")
+st.write("本工具用于核对报表中的单价数据是否与基准文件中的单价一致。")
 
 uploaded_file_to_check = st.file_uploader("请上传待核对的Excel文件", type=["xlsx", "xls"], accept_multiple_files=False)
 uploaded_file_base = st.file_uploader("请上传核对基准Excel文件", type=["xlsx", "xls"])
 
 if uploaded_file_to_check and uploaded_file_base:
-    df_to_check = pd.read_excel(uploaded_file_to_check, sheet_name='Sheet1', header=2)
+    with st.expander('更新列名'):
+        uploaded_category = st.text_input("请输入药品名所在的列名（如不输入，则默认为'品名'）")
+        if uploaded_category:
+            category = uploaded_category
+            st.success(f"已更新品名列名为：{category}")
+
+        uploaded_price = st.text_input("请输入购入单价所在的列名（如不输入，则默认为'购入单价'）")
+        if uploaded_price:
+            price = uploaded_price
+            st.success(f"已更新购入单价列名为：{price}")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric(label="当前品名列名", value=category)
+    with col2:
+        st.metric(label="当前购入单价列名", value=price)
+
+    df_to_check = pd.read_excel(uploaded_file_to_check, sheet_name='Sheet1')
     df_base = pd.read_excel(uploaded_file_base)
 
     if st.button('核对数据'):
