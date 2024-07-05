@@ -30,7 +30,7 @@ def check(df_to_check: pd.DataFrame, df_base: pd.DataFrame):
     errors = []
 
     for i in range(len(df_need)):
-        name = df_need.iloc[i]['品名']
+        name = df_need.iloc[i][category]
         value = df_need.iloc[i, 1]
         if name not in name_list:
             errors.append(f"[{name}] 不存在于基准文件中\n")
@@ -83,7 +83,7 @@ if uploaded_file_to_check and uploaded_file_base:
             st.success("核对成功！")
             base_list = []
             for i in range(len(df_need)):
-                name = df_need.iloc[i]['品名']
+                name = df_need.iloc[i][category]
                 base_list.append(df_base_need[df_base_need[df_base_need.columns[0]] == name].iloc[0, 1])
             df_need['基准单价'] = base_list
             st.dataframe(df_need, height=500, width=700)
