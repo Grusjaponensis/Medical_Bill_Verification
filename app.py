@@ -8,7 +8,7 @@ def check(df_to_check: pd.DataFrame, df_base: pd.DataFrame):
     global category, price
     if category not in df_to_check.columns:
         raise TypeError(f"\'{category}\'列不存在，请检查待核查文件的数据格式或检查列名有无额外字符")
-    df_to_check = df_to_check.dropna(subset=['品名'])
+    df_to_check = df_to_check.dropna(subset=[category])
     
     if price not in df_to_check.columns:
         raise TypeError(f"\'{price}\'列不存在，请检查待核查文件的数据格式或检查列名有无额外字符")
