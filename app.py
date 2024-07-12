@@ -29,7 +29,7 @@ def check(df_to_check: pd.DataFrame, df_base: pd.DataFrame):
         warning_message = "**处理数据过程中，被删除的行是**：\n\n"
         temp = ' | '
         for index, row in delete_columns.iterrows():
-            warning_message += f"行 {index}: {temp.join(row.to_list())}\n\n"
+            warning_message += f"行 {index}: {temp.join([str(item) for item in row.to_list()])}\n\n"
         st.warning(warning_message)
 
     df_to_check = df_to_check.drop(delete_columns.index)
@@ -50,7 +50,6 @@ def check(df_to_check: pd.DataFrame, df_base: pd.DataFrame):
     del name_list_p
     
     errors = []
-    none_float_errors = []
     
     for i in range(len(df_need)):
         name = str(df_need.iloc[i][category]).strip()   # name in check file
