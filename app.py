@@ -92,38 +92,42 @@ if uploaded_file_base:
                 st.success("**已选择基准表中的列**：" + "，".join(selected_base))
 
     if uploaded_file_to_check:
-        df_to_check = pd.read_excel(uploaded_file_to_check, sheet_name='Sheet1')
+        excel_file = pd.ExcelFile(uploaded_file_to_check)
+        if "Sheet1" in excel_file.sheet_names:
+            df_to_check = pd.read_excel(uploaded_file_to_check, sheet_name='Sheet1')
 
-        with st.expander('选择待核对表中的列'):
-            category_options = df_to_check.columns.tolist()
-            uploaded_category = st.selectbox("请选择待核查文件中药品名所在的列名", options=category_options)
-            if uploaded_category:
-                category = uploaded_category
-                st.success(f"**已更新品名列名为**：{category}")
+            with st.expander('选择待核对表中的列'):
+                category_options = df_to_check.columns.tolist()
+                uploaded_category = st.selectbox("请选择待核查文件中药品名所在的列名", options=category_options)
+                if uploaded_category:
+                    category = uploaded_category
+                    st.success(f"**已更新品名列名为**：{category}")
 
-            price_options = df_to_check.columns.tolist()
-            uploaded_price = st.selectbox("请选择待核查文件中购入单价所在的列名", options=price_options)
-            if uploaded_price:
-                price = uploaded_price
-                st.success(f"**已更新购入单价列名为**：{price}")
+                price_options = df_to_check.columns.tolist()
+                uploaded_price = st.selectbox("请选择待核查文件中购入单价所在的列名", options=price_options)
+                if uploaded_price:
+                    price = uploaded_price
+                    st.success(f"**已更新购入单价列名为**：{price}")
 
-        if st.button('核对数据'):
-            try:
-                (df_need, df_base_need) = check(df_to_check, df_base)
-            except CustomizedError as e:
-                st.error(e)
-            except NoneFloatError as e:
-                st.error(e)
-            else:
-                st.success("核对无误！")
-                st.toast("核对完成！")
-                st.balloons()
-                base_list = []
-                for i in range(len(df_need)):
-                    name = df_need.iloc[i][category]
-                    base_list.append(df_base_need[df_base_need[df_base_need.columns[0]] == name].iloc[0, 1])
-                df_need['基准单价'] = base_list
-                st.dataframe(df_need, height=500, width=700)
+            if st.button('核对数据'):
+                try:
+                    (df_need, df_base_need) = check(df_to_check, df_base)
+                except CustomizedError as e:
+                    st.error(e)
+                except NoneFloatError as e:
+                    st.error(e)
+                else:
+                    st.success("核对无误！")
+                    st.toast("核对完成！")
+                    st.balloons()
+                    base_list = []
+                    for i in range(len(df_need)):
+                        name = df_need.iloc[i][category]
+                        base_list.append(df_base_need[df_base_need[df_base_need.columns[0]] == name].iloc[0, 1])
+                    df_need['基准单价'] = base_list
+                    st.dataframe(df_need, height=500, width=700)
+        else:
+            st.error("**请确保待核查文件中有“Sheet1”页**！")
     else:
         st.write("使用说明：请上传待检查Excel文件")
 else:
