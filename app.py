@@ -94,7 +94,7 @@ if uploaded_file_base:
     if uploaded_file_to_check:
         df_to_check = pd.read_excel(uploaded_file_to_check, sheet_name='Sheet1')
 
-        with st.expander('更新列名'):
+        with st.expander('选择待核对表中的列'):
             category_options = df_to_check.columns.tolist()
             uploaded_category = st.selectbox("请选择待核查文件中药品名所在的列名", options=category_options)
             if uploaded_category:
