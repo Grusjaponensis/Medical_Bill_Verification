@@ -74,17 +74,19 @@ def special_check(df_to_check: pd.DataFrame, df_base: pd.DataFrame,
                 content_to_display = ""
                 for _, row in similar_names_with_diff_spec.iterrows():
                     content_to_display += f"\t[名称：{row[0]}，规格：{row[1]}/袋，单价：{row[2]}，生产企业：{row[3]}]\n\n"
-                errors.append(f"**[名称：{name}，规格：{df_need[specifications][index]}/袋，单价：{df_need[price][index]}，生产企业：{df_need[company][index]}]** 在基准文件中不存在，\
-                    最相近的是：\n\n{content_to_display}\n\n")
+                errors.append(f"**[名称：{name}，规格：{df_need[specifications][index]}/袋，单价：{df_need[price][index]}，\
+                              生产企业：{df_need[company][index]}]** 在基准文件中不存在，\
+                              最相近的是：\n\n{content_to_display}\n\n")
             elif len(filtered_df) > 1:
-                errors.append(f"**[名称：{name}，规格：{df_need[specifications][index]}/袋，生产企业：{df_need[company][index]}]** 在基准文件中存在多个匹配项，请检查数据\n")
+                errors.append(f"**[名称：{name}，规格：{df_need[specifications][index]}/袋，生产企业：{df_need[company][index]}]** \
+                              在基准文件中存在多个匹配项，请检查数据\n")
             elif not isinstance(filtered_df.iloc[0, 2], (int, float)):
                     raise NoneFloatError(f"**{name}** 在基准文件中的价格不是可识别的数字，请检查相应数据\n")
             else:
                 base_price = float(filtered_df.iloc[0, 2])
                 if abs(base_price - df_need[price][index]) >= 0.0001:
-                    errors.append(f"**[单价：{name}，规格：{df_need[specifications][index]}，生产企业：{df_need[company][index]}]** 的单价与基准文件不符，\
-                                  基准文件中为 **{base_price:.3f}**，实际为 **{df_need[price][index]:.3f}**.\n")
+                    errors.append(f"**[单价：{name}，规格：{df_need[specifications][index]}，生产企业：{df_need[company][index]}]** \
+                                  的单价与基准文件不符，基准文件中为 **{base_price:.3f}**，实际为 **{df_need[price][index]:.3f}**.\n")
     
     if errors:
         raise CustomizedError("**检测到以下错误**:\n\n" + "\n".join(errors))
