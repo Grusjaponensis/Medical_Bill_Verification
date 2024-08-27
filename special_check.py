@@ -74,7 +74,8 @@ def special_check(df_to_check: pd.DataFrame, df_base: pd.DataFrame,
                 content_to_display = ""
                 for _, row in similar_names_with_diff_spec.iterrows():
                     content_to_display += f"\t[名称：{row[0]}，规格：{row[1]}/袋，单价：{row[2]}，生产企业：{row[3]}]\n\n"
-                errors.append(f"**[名称：{name}，规格：{df_need[specifications][index]}/袋，单价：{df_need[price][index]}，生产企业：{df_need[company][index]}]** 在基准文件中不存在，最相近的是：\n\n{content_to_display}\n\n")
+                errors.append(f"**[名称：{name}，规格：{df_need[specifications][index]}/袋，单价：{df_need[price][index]}，生产企业：{df_need[company][index]}]** 在基准文件中不存在，\
+                    最相近的是：\n\n{content_to_display}\n\n")
             elif len(filtered_df) > 1:
                 errors.append(f"**[名称：{name}，规格：{df_need[specifications][index]}/袋，生产企业：{df_need[company][index]}]** 在基准文件中存在多个匹配项，请检查数据\n")
             elif not isinstance(filtered_df.iloc[0, 2], (int, float)):
