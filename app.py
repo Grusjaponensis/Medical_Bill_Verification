@@ -53,7 +53,7 @@ if uploaded_file_base:
     if uploaded_file_to_check:
         excel_file = pd.ExcelFile(uploaded_file_to_check)
         if "Sheet1" in excel_file.sheet_names:
-            df_to_check = pd.read_excel(uploaded_file_to_check, header=2, sheet_name='Sheet1')
+            df_to_check = pd.read_excel(uploaded_file_to_check, header=(2 if is_special_mode_activated else 0), sheet_name='Sheet1')
             options: list[str] = df_to_check.columns.tolist()
 
             with st.expander('选择待核对表中的列'):
