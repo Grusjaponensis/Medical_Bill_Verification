@@ -93,7 +93,7 @@ if uploaded_file_base:
                     st.toast("核对完成！")
                     st.balloons()
                     
-                    df_need['基准单价'] = df_need[category].map(df_base_need.set_index(df_base_need.columns[0]).iloc[:, 1])
+                    df_need['基准单价'] = df_need[category].map(df_base_need.set_index(df_base_need.columns[0]).iloc[:, 0])
                     
                     st.dataframe(df_need, height=500, width=700)
         else:
