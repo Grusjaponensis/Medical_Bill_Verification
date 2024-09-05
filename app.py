@@ -92,9 +92,11 @@ if uploaded_file_base:
                     st.success("核对无误！")
                     st.toast("核对完成！")
                     st.balloons()
-                    
-                    df_need['基准单价'] = df_need[category].map(df_base_need.set_index(df_base_need.columns[0]).iloc[:, 0])
-                    
+                    base_list = []
+                    for i in range(len(df_need)):
+                        name = df_need.iloc[i][category]
+                        base_list.append(df_base_need[df_base_need[df_base_need.columns[0]] == name].iloc[0, 1])
+                    df_need['基准单价'] = base_list
                     st.dataframe(df_need, height=500, width=700)
         else:
             st.error("**请确保待核查文件中有“Sheet1”页**！")
